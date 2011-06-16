@@ -10,95 +10,70 @@ namespace BowlingKata
 	{
 		[Test()]
 		public void EmptySheetAsAScoreOfZero ()
+		{			
+			ScoreAssert( "--------------------", 0 );
+		}
+		
+		private void ScoreAssert(String hits, int score)
 		{
-			Assert.That( "--------------------", Scores(0) );
+			Assert.That( ScoreOf(Sheet.withHits(hits)), Is.EqualTo(score) );
+		}
+		
+		private int ScoreOf(Sheet sheet)
+		{
+			return sheet.Score();
 		}
 		
 		[Test()]
 		public void ASheetWithOneHitScoresOne() 
 		{
-			Assert.That( "1-------------------", Scores(1) );
+			ScoreAssert( "1-------------------", 1 );
 		}
 		[Test()]
 		public void CanScoreOpenFrames()
 		{
-			Assert.That( "22222222222222222222", Scores(40) );
+			ScoreAssert( "22222222222222222222", 40 );
 		}
 		[Test()]
 		public void CanScoreSpareAtBeginning()
 		{
-			Assert.That( "1/------------------", Scores(10) );
+			ScoreAssert( "1/------------------", 10 );
 		}
 		[Test()]
 		public void SpareCountTheFollowingHitInHisScore()
 		{
-			Assert.That( "1/1-----------------", Scores(12) );
+			ScoreAssert( "1/1-----------------", 12 );
 		}
 		[Test()]
 		public void CanScoreSpareAtTheEnd() 
 		{
-			Assert.That( "------------------1/2", Scores(12) );
+			ScoreAssert( "------------------1/2", 12 );
 		}	
 		[Test()]
 		public void CanScoreStrikeAtTheBeginning()
 		{
-			Assert.That( "X------------------", Scores(10) );
+			ScoreAssert( "X------------------", 10 );
 		}
 		[Test()]
 		public void StrikeCountTheTwoFollowingHitsInIsScore()
 		{
-			Assert.That( "X12----------------", Scores(16) );
+			ScoreAssert( "X12----------------", 16 );
 		}
 		[Test()]
 		public void CanScoreStrikeAtTheEnd() 
 		{
-			Assert.That( "------------------X12", Scores(13) );
+			ScoreAssert( "------------------X12", 13 );
 		}
 			
 		[Test()]
 		public void TheKillingExamples() 
 		{
-			Assert.That("XXXXXXXXXXXX", Scores(300) );
-			Assert.That("1/XX9/-5X--X4/5/X", Scores(149) );
-			Assert.That("X6-8/459/8--88/9-8/6", Scores(123) );
-		}
-		
-		
-		
-		private Constraint Scores(int expected)
-		{
-			return new ScoreConstraint(expected);
+			ScoreAssert( "XXXXXXXXXXXX", 300 );
+			ScoreAssert( "1/XX9/-5X--X4/5/X", 149 );
+			ScoreAssert( "X6-8/459/8--88/9-8/6", 123 );
 		}
 		
 	}
-	
-	public class ScoreConstraint:Constraint
-	{
-		private int expected;
-		private Sheet sheetUnderTest;
-		public ScoreConstraint(int expected)
-		{
-			this.expected = expected;
-		}
-		public override bool Matches(Object actual)
-		{
-			this.sheetUnderTest = Sheet.withHits((String) actual);
-			return this.sheetUnderTest.Score() == this.expected;
-		}
-		public override void WriteDescriptionTo(MessageWriter writer)
-		{
-			writer.WriteExpectedValue(this.expected);
-		}
-		public override void WriteActualValueTo(MessageWriter writer)
-		{
-			writer.WriteActualValue(this.sheetUnderTest.Score());
-		}
-		
-	}
-	
-	
-	
-	
 	
 }
 
